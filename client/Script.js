@@ -1,40 +1,32 @@
-const sendBtn = document.getElementById("send-btn");
-const userInput = document.getElementById("user-input");
-const chatBox = document.getElementById("chat-box");
-const languageSelector = document.getElementById("language");
-const courseContent = document.getElementById("course-content");
+document.getElementById("send-btn").addEventListener("click", sendMessage);
 
-const courseData = {
-  Hindi: "🪔 Hindi Basics: नमस्ते (Hello), धन्यवाद (Thank you), आप कैसे हैं? (How are you?)",
-  Malayalam: "🌴 Malayalam Basics: നമസ്കാരം (Hello), നന്ദി (Thank you), സുഖമാണോ? (How are you?)",
-  French: "🥖 French Basics: Bonjour (Hello), Merci (Thank you), Comment ça va? (How are you?)",
-  German: "🕍 German Basics: Hallo (Hello), Danke (Thank you), Wie geht's? (How are you?)",
-};
+function sendMessage() {
+  const userInput = document.getElementById("user-input");
+  const languageSelect = document.getElementById("language");
+  const chatBox = document.getElementById("chat-box");
 
-function updateCourseMaterial() {
-  const lang = languageSelector.value;
-  courseContent.innerText = courseData[lang];
-}
+  const message = userInput.value.trim();
+  const language = languageSelect.value;
 
-languageSelector.addEventListener("change", updateCourseMaterial);
-updateCourseMaterial();
+  if (message === "") return;
 
-sendBtn.addEventListener("click", async () => {
-  const message = userInput.value;
-  if (!message) return;
-
-  const lang = languageSelector.value;
-
-  chatBox.innerHTML += `<p><strong>You:</strong> ${message}</p>`;
+  // Show user message
+  chatBox.innerHTML += `<div class="message user"><strong>You:</strong> ${message}</div>`;
   userInput.value = "";
 
-  const response = await fetch("http://localhost:5000/api/chat", {
+  fetch("chat.php", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ message, language: lang }),
-  });
-
-  const data = await response.json();
-  chatBox.innerHTML += `<p><strong>Bot:</strong> ${data.reply}</p>`;
-  chatBox.scrollTop = chatBox.scrollHeight;
-});
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ message, language })
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      chatBox.innerHTML += `<div class="message bot"><strong>Bot (${language}):</strong> ${data.reply}</div>`;
+      chatBox.scrollTop = chatBox.scrollHeight;
+    })
+    .catch((err) => {
+      chatBox.innerHTML += `<div class="message error">⚠️ Error: ${err.message}</div>`;
+    });
+}
