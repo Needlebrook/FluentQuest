@@ -38,7 +38,7 @@ async function sendMessage() {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": "Bearer YOUR_HF_API_TOKEN" // 🔁 Replace with your actual HuggingFace API token
+        "Authorization": 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
       },
       body: JSON.stringify({ inputs: message })
     });
