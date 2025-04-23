@@ -1,3 +1,4 @@
+const sendBtn = document.getElementById("send-btn");
 const userInput = document.getElementById("user-input");
 const chatBox = document.getElementById("chat-box");
 const languageSelector = document.getElementById("language");
@@ -15,19 +16,19 @@ function updateCourseContent() {
   courseContent.innerText = courseData[language] || "No course material available.";
 }
 
-// Update course material when the page loads and when language changes
+// Update course content on load and when language changes
 languageSelector.addEventListener("change", updateCourseContent);
 updateCourseContent();
 
-sendBtn.addEventListener("click", async () => {
+// Main send message function
+async function sendMessage() {
   const message = userInput.value.trim();
   if (!message) return;
 
   const lang = languageSelector.value;
 
   // Show user message
-  chatBox.innerHTML += `<div const sendBtn = document.getElementById("send-btn");
-class="message user"><strong>You:</strong> ${message}</div>`;
+  chatBox.innerHTML += `<div class="message user"><strong>You:</strong> ${message}</div>`;
   userInput.value = "";
 
   try {
@@ -39,7 +40,7 @@ class="message user"><strong>You:</strong> ${message}</div>`;
 
     const data = await response.json();
 
-    // Check for tips/notes in reply
+    // Show AI response with special styling if it includes a Tip or Note
     if (data.reply.includes("Tip:") || data.reply.includes("Note:")) {
       chatBox.innerHTML += `<div class="message tip"><strong>Bot Tip:</strong> ${data.reply}</div>`;
     } else {
@@ -49,5 +50,15 @@ class="message user"><strong>You:</strong> ${message}</div>`;
     chatBox.scrollTop = chatBox.scrollHeight;
   } catch (err) {
     chatBox.innerHTML += `<div class="message error">⚠️ Error: ${err.message}</div>`;
+  }
+}
+
+// Button click
+sendBtn.addEventListener("click", sendMessage);
+
+// Enter key support
+userInput.addEventListener("keypress", (e) => {
+  if (e.key === "Enter") {
+    sendMessage();
   }
 });
