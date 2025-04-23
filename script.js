@@ -32,7 +32,7 @@ async function sendMessage() {
   userInput.value = "";
 
   try {
-    const response = await fetch("http://localhost:5000/api/chat", {
+    const response = await fetch("https://79676942-eb03-45d9-9b38-cae3b780966a-00-2b4oz1kmfoihd.pike.replit.dev/api/chat", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ message, language: lang }),
