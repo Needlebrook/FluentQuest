@@ -1,54 +1,58 @@
-const express = require("express");
-const cors = require("cors");
-const bodyParser = require("body-parser");
-const fetch = require("node-fetch");
+const sendBtn = document.getElementById("send-btn");
+const userInput = document.getElementById("user-input");
+const chatBox = document.getElementById("chat-box");
+const languageSelector = document.getElementById("language");
+const courseContent = document.getElementById("course-content");
 
-const app = express();
-app.use(cors());
-app.use(bodyParser.json());
+const courseData = {
+  Hindi: "🪔 Hindi Basics: नमस्ते (Hello), धन्यवाद (Thank you), आप कैसे हैं? (How are you?)",
+  Malayalam: "🌴 Malayalam Basics: നമസ്കാരം (Hello), നന്ദി (Thank you), സുഖമാണോ? (How are you?)",
+  French: "🥖 French Basics: Bonjour (Hello), Merci (Thank you), Comment ça va? (How are you?)",
+  German: "🕍 German Basics: Hallo (Hello), Danke (Thank you), Wie geht's? (How are you?)",
+};
 
-const HF_API_KEY = process.env.HF_API_KEY; // Set this in Replit secrets
+function updateCourseContent() {
+  const language = languageSelector.value;
+  courseContent.innerText = courseData[language] || "No course material available.";
+}
 
-app.post("/api/chat", async (req, res) => {
-  const { message, language } = req.body;
-  if (!message || !language) {
-    return res.status(400).json({ error: "Missing message or language" });
-  }
+// Update course content on page load and when language changes
+languageSelector.addEventListener("change", updateCourseContent);
+updateCourseContent();
 
-  const systemPrompt = `You are a friendly and helpful language tutor. You will reply to the user in ${language}. After 3 exchanges, begin to provide short explanations or corrections in English to help learning.`;
+async function sendMessage() {
+  const message = userInput.value.trim();
+  if (!message) return;
+
+  const language = languageSelector.value;
+
+  // Show user's message in chat box
+  chatBox.innerHTML += `<div class="message user"><strong>You:</strong> ${message}</div>`;
+  userInput.value = "";
 
   try {
-    const hfResponse = await fetch("https://api-inference.huggingface.co/models/microsoft/DialoGPT-medium", {
+    const response = await fetch("/api/chat", {
       method: "POST",
-      headers: {
-        "Authorization": `Bearer ${HF_API_KEY}`,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        inputs: {
-          past_user_inputs: [systemPrompt],
-          text: message
-        }
-      })
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message, language }),
     });
 
-    const result = await hfResponse.json();
+    const data = await response.json();
 
-    if (result.error) {
-      console.error("Hugging Face error:", result);
-      return res.status(500).json({ error: result.error });
+    if (data.error) {
+      chatBox.innerHTML += `<div class="message error">⚠️ Error: ${data.error}</div>`;
+    } else {
+      // Show bot reply
+      chatBox.innerHTML += `<div class="message bot"><strong>Bot (${language}):</strong> ${data.reply}</div>`;
     }
 
-    const reply = result.generated_text || "Sorry, I didn’t understand that.";
-
-    res.json({ reply });
-  } catch (err) {
-    console.error("Fetch error:", err);
-    res.status(500).json({ error: "Failed to get response from Hugging Face" });
+    chatBox.scrollTop = chatBox.scrollHeight;
+  } catch (error) {
+    chatBox.innerHTML += `<div class="message error">⚠️ Error: ${error.message}</div>`;
   }
-});
+}
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+sendBtn.addEventListener("click", sendMessage);
+userInput.addEventListener("keypress", (e) => {
+  if (e.key === "Enter") sendMessage();
 });
