@@ -1,58 +1,34 @@
-const sendBtn = document.getElementById("send-btn");
-const userInput = document.getElementById("user-input");
-const chatBox = document.getElementById("chat-box");
-const languageSelector = document.getElementById("language");
-const courseContent = document.getElementById("course-content");
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FluentQuest</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="app">
+    <h1>FluentQuest 🌍</h1>
 
-const courseData = {
-  Hindi: "🪔 Hindi Basics: नमस्ते (Hello), धन्यवाद (Thank you), आप कैसे हैं? (How are you?)",
-  Malayalam: "🌴 Malayalam Basics: നമസ്കാരം (Hello), നന്ദി (Thank you), സുഖമാണോ? (How are you?)",
-  French: "🥖 French Basics: Bonjour (Hello), Merci (Thank you), Comment ça va? (How are you?)",
-  German: "🕍 German Basics: Hallo (Hello), Danke (Thank you), Wie geht's? (How are you?)",
-};
+    <label for="language">Choose your language:</label>
+    <select id="language">
+      <option value="Hindi">Hindi</option>
+      <option value="Malayalam">Malayalam</option>
+      <option value="French">French</option>
+      <option value="German">German</option>
+    </select>
 
-function updateCourseContent() {
-  const language = languageSelector.value;
-  courseContent.innerText = courseData[language] || "No course material available.";
-}
+    <div id="chat-box"></div>
 
-// Update course content on page load and when language changes
-languageSelector.addEventListener("change", updateCourseContent);
-updateCourseContent();
+    <div class="input-area">
+      <input type="text" id="user-input" placeholder="Type your message..." />
+      <button id="send-btn">Send</button>
+    </div>
 
-async function sendMessage() {
-  const message = userInput.value.trim();
-  if (!message) return;
+    <h2>📚 Course Material</h2>
+    <div id="course-content"></div>
+  </div>
 
-  const language = languageSelector.value;
-
-  // Show user's message in chat box
-  chatBox.innerHTML += `<div class="message user"><strong>You:</strong> ${message}</div>`;
-  userInput.value = "";
-
-  try {
-    const response = await fetch("/api/chat", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message, language }),
-    });
-
-    const data = await response.json();
-
-    if (data.error) {
-      chatBox.innerHTML += `<div class="message error">⚠️ Error: ${data.error}</div>`;
-    } else {
-      // Show bot reply
-      chatBox.innerHTML += `<div class="message bot"><strong>Bot (${language}):</strong> ${data.reply}</div>`;
-    }
-
-    chatBox.scrollTop = chatBox.scrollHeight;
-  } catch (error) {
-    chatBox.innerHTML += `<div class="message error">⚠️ Error: ${error.message}</div>`;
-  }
-}
-
-sendBtn.addEventListener("click", sendMessage);
-userInput.addEventListener("keypress", (e) => {
-  if (e.key === "Enter") sendMessage();
-});
+  <script src="script.js"></script>
+</body>
+</html>
