@@ -16,7 +16,7 @@ function updateCourseContent() {
   courseContent.innerText = courseData[language] || "No course material available.";
 }
 
-// Update course content on page load and when language changes
+// Update course content on load and when language changes
 languageSelector.addEventListener("change", updateCourseContent);
 updateCourseContent();
 
@@ -24,9 +24,9 @@ async function sendMessage() {
   const message = userInput.value.trim();
   if (!message) return;
 
-  const language = languageSelector.value;
+  const lang = languageSelector.value;
 
-  // Show user's message in chat box
+  // Show user message
   chatBox.innerHTML += `<div class="message user"><strong>You:</strong> ${message}</div>`;
   userInput.value = "";
 
@@ -34,21 +34,28 @@ async function sendMessage() {
     const response = await fetch("/api/chat", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message, language }),
+      body: JSON.stringify({ message, language: lang }),
     });
 
-    const data = await response.json();
+    const text = await response.text(); // Get raw text response
+
+    let data;
+    try {
+      data = JSON.parse(text); // Try to parse as JSON
+    } catch {
+      // If parse fails, fallback to plain text response
+      data = { reply: text };
+    }
 
     if (data.error) {
       chatBox.innerHTML += `<div class="message error">⚠️ Error: ${data.error}</div>`;
     } else {
-      // Show bot reply
-      chatBox.innerHTML += `<div class="message bot"><strong>Bot (${language}):</strong> ${data.reply}</div>`;
+      chatBox.innerHTML += `<div class="message bot"><strong>Bot (${lang}):</strong> ${data.reply}</div>`;
     }
 
     chatBox.scrollTop = chatBox.scrollHeight;
-  } catch (error) {
-    chatBox.innerHTML += `<div class="message error">⚠️ Error: ${error.message}</div>`;
+  } catch (err) {
+    chatBox.innerHTML += `<div class="message error">⚠️ Error: ${err.message}</div>`;
   }
 }
 
