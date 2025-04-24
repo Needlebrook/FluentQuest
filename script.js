@@ -38,7 +38,14 @@ async function sendMessage() {
       body: JSON.stringify({ message, language: lang }),
     });
 
-    const data = await response.json();
+    const text = await response.text();
+try {
+  const data = JSON.parse(text);
+  // continue using data.reply etc.
+} catch (err) {
+  console.error("⚠️ Failed to parse:", text);
+  showError("Invalid response from server");
+}
 
     if (data.error) {
       chatBox.innerHTML += `<div class="message error">⚠️ Error: ${data.error}</div>`;
