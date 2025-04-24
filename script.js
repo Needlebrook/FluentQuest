@@ -38,12 +38,14 @@ async function sendMessage() {
     });
 
     const text = await response.text(); // Get raw text response
+    console.log("Raw response text:", text);
 
     let data;
     try {
       data = JSON.parse(text); // Try to parse as JSON
     } catch {
       // If parse fails, fallback to plain text response
+      console.warn("JSON.parse failed, falling back to plain text");
       data = { reply: text };
     }
 
