@@ -16,7 +16,6 @@ function updateCourseContent() {
   courseContent.innerText = courseData[language] || "No course material available.";
 }
 
-// Update course content on load and when language changes
 languageSelector.addEventListener("change", updateCourseContent);
 updateCourseContent();
 
@@ -26,27 +25,27 @@ async function sendMessage() {
 
   const lang = languageSelector.value;
 
-  // Show user message
+  // Show user message in chat box
   chatBox.innerHTML += `<div class="message user"><strong>You:</strong> ${message}</div>`;
   userInput.value = "";
 
   try {
-    const response = await fetch("/api/chat", {
+    // Use full backend URL here
+    const response = await fetch("https://79676942-eb03-45d9-9b38-cae3b780966a-00-2b4oz1kmfoihd.pike.replit.dev/api/chat", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ message, language: lang }),
     });
 
-    const text = await response.text(); // Get raw text response
-    console.log("Raw response text:", text);
+    const rawText = await response.text();
+    console.log("Raw response text:", rawText);
 
     let data;
     try {
-      data = JSON.parse(text); // Try to parse as JSON
+      data = JSON.parse(rawText);
     } catch {
-      // If parse fails, fallback to plain text response
       console.warn("JSON.parse failed, falling back to plain text");
-      data = { reply: text };
+      data = { reply: rawText };
     }
 
     if (data.error) {
