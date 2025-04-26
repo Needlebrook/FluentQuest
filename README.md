@@ -3,6 +3,8 @@
 
 FluentQuest is a (as of now unfinished) language-learning AI chat bot that helps you learn Hindi, Malayalam, French or German. 🌐
 
+(Created as the final micro project for KTU's S2 course *UCEST206 ENGINEERING ENTERPRENEURSHIP AND IPR* )
+
 ## Tech Stack
 
 **Client:** Html, css, javascript (hosted on GitHub Pages)
@@ -11,7 +13,17 @@ FluentQuest is a (as of now unfinished) language-learning AI chat bot that helps
 
 BlenderBot (through Hugging Face Inference API)
 
-(Created as the final micro project for KTU's S2 course *UCEST206 ENGINEERING ENTERPRENEURSHIP AND IPR*)
+## Members
 
+Celia Victor
+- [@Needlebrook](https://www.github.com/Needlebrook)
 
+Christene Sara John 
+- [@2024-christene](https://github.com/2024-Christene)
+
+Diya Pillai
+- [@diya-glitch](https://github.com/diya-glitch)
+
+Chintu Jolly
+- [@chintujolly](https://github.com/chintujolly)
 
