@@ -5,6 +5,8 @@ FluentQuest is a (as of now unfinished) language-learning AI chat bot that helps
 
 (Created as the final micro project for KTU's S2 course *UCEST206 ENGINEERING ENTERPRENEURSHIP AND IPR* )
 
+Presented 26th April 2025
+
 ## Tech Stack
 
 **Client:** Html, css, javascript (hosted on GitHub Pages)
